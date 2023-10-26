@@ -79,6 +79,20 @@
      <height>26</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuproject">
+    <property name="title">
+     <string>Project</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menurun">
+    <property name="title">
+     <string>Run</string>
+    </property>
+    <addaction name="actionRunAndStop"/>
+    <addaction name="actionClear"/>
+   </widget>
+   <addaction name="menuproject"/>
+   <addaction name="menurun"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -89,8 +103,28 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionRunAndStop">
+   <property name="icon">
+    <iconset resource="sourcefile.qrc">
+     <normaloff>:/start.png</normaloff>:/start.png</iconset>
+   </property>
+   <property name="text">
+    <string>RunAndStop</string>
+   </property>
+  </action>
+  <action name="actionClear">
+   <property name="icon">
+    <iconset resource="sourcefile.qrc">
+     <normaloff>:/trash.png</normaloff>:/trash.png</iconset>
+   </property>
+   <property name="text">
+    <string>Clear</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="sourcefile.qrc"/>
+ </resources>
  <connections/>
 </ui>

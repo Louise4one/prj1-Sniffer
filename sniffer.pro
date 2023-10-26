@@ -26,21 +26,28 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    multithread.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    multithread.h
 
 FORMS += \
         mainwindow.ui
 
 INCLUDEPATH += \
                 D:/WpdPack/Include
+              #  D:/npcap/Include
 
 LIBS += \
         D:/WpdPack/Lib/wpcap.lib libws2_32
+       # D:/npcap/Lib/wpcap.lib libws2_32
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    sourcefile.qrc
