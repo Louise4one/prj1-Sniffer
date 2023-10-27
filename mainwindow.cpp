@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QString>
+#include <QDebug>
+#include <QObject>
 #include <multithread.h>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -36,6 +38,8 @@ MainWindow::MainWindow(QWidget *parent) :
             pointer = nullptr;
         }
     });//lambda表达式
+
+    connect(thread, &MultiThread::send, this, &MainWindow::HandleMessage);
 }
 
 MainWindow::~MainWindow()
@@ -93,4 +97,8 @@ int MainWindow::capture(){
         statusBar()->showMessage(device->name);
     }
     return 0;
+}
+
+void MainWindow::HandleMessage(DataPackage data){
+    qDebug()<<data.getTimeStamp()<<" "<<data.getInfo();
 }

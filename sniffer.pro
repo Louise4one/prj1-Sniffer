@@ -27,11 +27,14 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    multithread.cpp
+    multithread.cpp \
+    datapackage.cpp
 
 HEADERS += \
         mainwindow.h \
-    multithread.h
+    multithread.h \
+    dataformat.h \
+    datapackage.h
 
 FORMS += \
         mainwindow.ui
