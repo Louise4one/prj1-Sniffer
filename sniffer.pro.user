@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.8.2, 2023-10-27T14:20:14. -->
+<!-- Written by QtCreator 4.8.2, 2023-10-27T16:00:53. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -307,6 +307,7 @@
     <value type="bool" key="RunConfiguration.UseMultiProcess">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
+    <value type="bool" key="RunConfiguration.UseTerminal">false</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory"></value>
     <value type="QString" key="RunConfiguration.WorkingDirectory.default">D:/4one/Postgraduate/The Security of Software and System/build-sniffer-Desktop_Qt_5_12_2_MinGW_32_bit-Debug</value>
    </valuemap>

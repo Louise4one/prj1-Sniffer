@@ -15,6 +15,10 @@ public:
     void resetFlag();
     void run() override;
     int ethernetPackageHandle(const uchar *packet_content, QString &info); //从MAC层解析数据
+    int ipPackageHandle(const uchar *packet_content, int &ipPackage);  //处理ip数据包
+    int tcpPackageHandle(const uchar *packet_content, QString &info, int &ipPackage); //处理ARP数据包
+signals:
+    void send(DataPackage data);
 private:
     pcap_t *pointer;
     struct pcap_pkthdr *header;  //数据包头部
@@ -23,8 +27,7 @@ private:
     struct tm local_time;
     char timeString[16];  //时间以字符串呈现
     bool isDone;
-signals:
-    void send(DataPackage data);
+
 };
 
 #endif // MULTITHREAD_H

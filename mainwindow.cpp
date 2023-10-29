@@ -100,5 +100,7 @@ int MainWindow::capture(){
 }
 
 void MainWindow::HandleMessage(DataPackage data){
+
+    qDebug()<<"test debug"<<endl;
     qDebug()<<data.getTimeStamp()<<" "<<data.getInfo();
 }

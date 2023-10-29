@@ -54,3 +54,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     sourcefile.qrc
+
+CONFIG += console

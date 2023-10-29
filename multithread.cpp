@@ -69,7 +69,66 @@ int MultiThread::ethernetPackageHandle(const uchar *packet_content, QString &inf
         return 1;
     }
     default:
-        return 0;
+        break;
     }
     return 0;
+}
+
+int MultiThread::ipPackageHandle(const uchar *packet_content, int &ipPackage){
+    IP_HEADER *ip;
+    ip = (IP_HEADER*)(packet_content + 14);  //14byte是以太网头部
+    int protocol = ip->protocol;
+    ipPackage = (ntohs(ip->total_length) - ((ip->version_and_head_length) & 0x0F) * 4); //数据长度
+    return protocol;
+}
+
+int MultiThread::tcpPackageHandle(const uchar *packet_content, QString &info, int &ipPackage){
+    TCP_HEADER *tcp;
+    tcp = (TCP_HEADER*)(packet_content + 14 + 20);  //14byte是以太网头部，20byte是ip头部
+    ushort source_port = ntohs(tcp->source_port);
+    ushort destination_port = ntohs(tcp->destination_port);
+    QString proSend = "";
+    QString proRecv = "";
+    int type = 3;
+    int real_header_length = (tcp->header_length >> 4) * 4;
+    int tcp_data_length = ipPackage - real_header_length;
+
+    if(source_port == 443 || destination_port == 443){  //443
+        if(source_port == 443){
+            proSend = "(https)";
+        }else if(destination_port == 443){
+            proRecv = "(https)"
+        }
+    }
+    info += QString::number(source_port) + proSend + "->" + QString::number(destination_port) + proRecv;
+
+    QString flag = "";
+    if(tcp->flags & 0x08){
+        flag += "PSH";
+    }
+    if(tcp->flags & 0x10){
+        flag += "ACK";
+    }
+    if(tcp->flags & 0x02){
+        flag += "SYN";
+    }
+    if(tcp->flags & 0x20){
+        flag += "URG";
+    }
+    if(tcp->flags & 0x01){
+        flag += "FIN";
+    }
+    if(tcp->flags & 0x04){
+        flag += "RST";
+    }
+    if(flag != ""){
+        flag = flag.left(flag.length() - 1);
+        info += "[" + flag + "]";
+    }
+
+    uint sequence_number = ntohl(tcp->sequence_number);
+    uint ack_number = ntohl(tcp->ack_number);
+    ushort window_size = ntohs(tcp->window_size);
+    info += " Seq=" + QString::number(sequence_number) + "Ack=" + QString::number(ack_number) + "window=" + QString::number(window_size) + "len=" + QString::number(tcp_data_length);
+    return type;
 }
