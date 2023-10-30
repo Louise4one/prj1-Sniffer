@@ -7,7 +7,7 @@ class DataPackage
 {
 
 protected:
-    static QString byteToString(char *str, int size); //用于显示16进制内容
+    static QString byteToString(uchar *str, int size); //用于显示16进制内容
 public:
     const uchar *packet_content; //内容指针
 private:

@@ -76,7 +76,7 @@ typedef struct udp_header{
     ushort destination_port;
     ushort data_length;
     ushort checksum;
-} UPD_HEADER;
+} UDP_HEADER;
 
 //ARP
 //2byte hardware type

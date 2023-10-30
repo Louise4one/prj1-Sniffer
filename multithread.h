@@ -15,8 +15,12 @@ public:
     void resetFlag();
     void run() override;
     int ethernetPackageHandle(const uchar *packet_content, QString &info); //从MAC层解析数据
-    int ipPackageHandle(const uchar *packet_content, int &ipPackage);  //处理ip数据包
+    int ipPackageHandle(const uchar *packet_content, int &ipPackage);  //处理IP数据包
     int tcpPackageHandle(const uchar *packet_content, QString &info, int &ipPackage); //处理ARP数据包
+    int udpPackageHandle(const uchar *packet_content, QString &info);  //处理UDP数据包
+    QString arpPackageHandle(const uchar *packet_content);  //处理ARP数据包
+protected:
+    static QString byteToString(uchar *str, int size);
 signals:
     void send(DataPackage data);
 private:

@@ -10,17 +10,17 @@ DataPackage::DataPackage()
     this->package_type = 0;
 }
 
-QString DataPackage::byteToString(char *str, int size){
+QString DataPackage::byteToString(uchar *str, int size){
     QString res = "";
     for (int i = 0; i < size; i++) {
         char high = str[i] >> 4;
         char low = str[i] & 0xF;
-        if(high > 0x0A){
+        if(high >= 0x0A){
             high += 0x41 - 0x0A;
         }else {
             high += 0x30;
         }
-        if(low > 0x0A){
+        if(low >= 0x0A){
             low += 0x41 - 0x0A;
         }else {
             low += 0x30;
