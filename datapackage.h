@@ -21,7 +21,7 @@ public:
     void setDataLength(uint data_length);
     void setTimeStamp(QString time_stamp);
     void setPackageType(int type);
-    void setPointer(const uchar *packet_content, int size);
+    void setPointer(const uchar *packet_content, uint size);
     void setInfo(QString info);
 
     //获取
@@ -29,6 +29,16 @@ public:
     QString getTimeStamp();
     QString getPackageType();
     QString getInfo();
+    QString getDestination();
+    QString getSource();
+    
+    QString getDesMacAddr();
+    QString getSrcMacAddr();
+    QString getMacType();
+    
+    QString getDesIpAddr();
+    QString getSrcIpAddr();
+    QString getIpVersion();
 };
 
 #endif // DATAPACKAGE_H

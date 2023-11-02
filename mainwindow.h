@@ -6,6 +6,7 @@
 #include "winsock2.h"
 #include "datapackage.h"
 #include <QObject>
+#include <QVector>
 
 namespace Ui {
 class MainWindow;
@@ -32,6 +33,8 @@ private:
     pcap_if_t *all_device;
     pcap_if_t *device;
     pcap_t *pointer;
+    QVector<DataPackage>pData;
+    int countNumber; //数据包个数
     char errbuf[PCAP_ERRBUF_SIZE];
 };
 

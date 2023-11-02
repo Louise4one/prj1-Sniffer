@@ -66,10 +66,13 @@ void MultiThread::run(){//不停捕捉数据包
             int type = ethernetPackageHandle(pkt_data, info);
             if(type){
                 DataPackage data;
-                int len = header->len;
+                uint len = header->len;
                 data.setInfo(info);
                 data.setDataLength(len);
                 data.setTimeStamp(timeString);
+                data.setPackageType(type);
+                data.setPointer(pkt_data, len);
+                emit send(data);
             }
         }
     }
@@ -217,4 +220,18 @@ QString MultiThread::arpPackageHandle(const uchar *packet_content){
     }
 
     return res;
+}
+
+QString MultiThread::dnsPackageHandle(const uchar *packet_content){
+    DNS_HEADER* dns;
+    dns = (DNS_HEADER*)(packet_content + 14 + 20 + 8);  //8是UDP头部长度
+    ushort id;
+    ushort type = dns->flag;
+    QString info = "";
+    if((type & 0xf800) == 0x0000){  //QR位
+        info = "Standard query";
+    }else if ((type & 0xf800) == 0x8000) {
+        info = "Standard query response";
+    }
+
 }
