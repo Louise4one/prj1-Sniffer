@@ -11,7 +11,6 @@ typedef unsigned long ulong;//4
 //6byte destination address
 //6byte source address
 //2byte type
-
 typedef struct ether_head{
     uchar ethernet_destination_host[6];
     uchar ethernet_source_host[6];
@@ -114,4 +113,21 @@ typedef struct icmp_header{
     ushort id;
     ushort sequence;
 } ICMP_HEADER;
+
+//DNS
+//16bit id
+//16bit flag
+//16bit question
+//16bit answer RRs
+//16bit authority RRs
+//16bit additional RRs
+typedef struct dns_header{
+    ushort id;
+    ushort flag;
+    ushort question;
+    ushort answer;
+    ushort authority;
+    ushort additional;
+} DNS_HEADER;
+
 #endif // DATAFORMAT_H

@@ -19,6 +19,8 @@ public:
     int tcpPackageHandle(const uchar *packet_content, QString &info, int &ipPackage); //处理ARP数据包
     int udpPackageHandle(const uchar *packet_content, QString &info);  //处理UDP数据包
     QString arpPackageHandle(const uchar *packet_content);  //处理ARP数据包
+    QString dnsPackageHandle(const uchar *packet_content);  //处理DNS数据包
+    QString icmpPackageHandle(const uchar *packet_content);  //处理ICMP数据包
 protected:
     static QString byteToString(uchar *str, int size);
 signals:

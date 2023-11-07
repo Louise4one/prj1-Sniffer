@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->toolBar->addAction(ui->actionRunAndStop);
     ui->toolBar->addAction(ui->actionClear);
     countNumber = 0;
+    selectRow = -1;  //一开始没有选择
     showNetworkCard();
     static bool index = false;
     MultiThread *thread = new MultiThread;
@@ -23,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
             ui->tableWidget->clearContents(); //清空
             ui->tableWidget->setRowCount(0);
             countNumber = 0;
+            selectRow = -1;
 
             int dataSize = this->pData.size();
             for (int i = 0; i < dataSize; i++) {
@@ -41,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
                 ui->comboBox->setEnabled(false);
             } else {
                 index = !index;
+                
                 countNumber = 0;
             }
         }else{
@@ -74,11 +77,17 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableWidget->setShowGrid(false);
     ui->tableWidget->verticalHeader()->setVisible(false);
     ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-
+    ui->treeWidget->setHeaderHidden(true);
 }
 
 MainWindow::~MainWindow()
 {
+    int dataSize = pData.size();
+    for (int i = 0; i < dataSize; i++) {
+        free((char*)(this->pData[i].packet_content));
+        this->pData[i].packet_content = nullptr;
+    }
+    QVector<DataPackage>().swap(pData);
     delete ui;
 }
 //用于显示网卡设备
@@ -170,4 +179,24 @@ void MainWindow::HandleMessage(DataPackage data){
         ui->tableWidget->item(countNumber, i)->setBackgroundColor(color);
     }
     countNumber ++;
+}
+
+void MainWindow::on_tableWidget_cellClicked(int row, int column)
+{
+    if(row == selectRow){
+        return ;
+    }else {
+        ui->treeWidget->clear();
+        selectRow = row;
+        QString DesMac = pData[selectRow].getDesMacAddr();
+        QString SrcMac = pData[selectRow].getSrcMacAddr();
+        QString type = pData[selectRow].getMacType();
+        QString tree = "Ethernet, Destination:" + DesMac + "Source:" + SrcMac;
+        QTreeWidgetItem *item = new QTreeWidgetItem(QStringList() << tree);
+        ui->treeWidget->addTopLevelItem(item);
+        item->addChild(new QTreeWidgetItem(QStringList() << "Destination" + DesMac));
+        item->addChild(new QTreeWidgetItem(QStringList() << "Source" + SrcMac));
+        item->addChild(new QTreeWidgetItem(QStringList() << "Type" + type));
+    }
+    
 }

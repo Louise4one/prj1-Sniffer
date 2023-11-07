@@ -89,7 +89,7 @@ int MultiThread::ethernetPackageHandle(const uchar *packet_content, QString &inf
         int res = ipPackageHandle(packet_content, ipPackage);
         switch (res) {
         case 1:{  //ICMP
-            info = "ICMP";
+            info = icmpPackageHandle(packet_content);
             return 2;
         }
         case 6:{  //TCP
@@ -178,6 +178,7 @@ int MultiThread::udpPackageHandle(const uchar *packet_content, QString &info){
     ushort destination_port = ntohs(udp->destination_port);
     ushort source_port = ntohs(udp->source_port);
     if(destination_port == 53 || source_port == 53){  //DNS
+        info = dnsPackageHandle(packet_content);
         return 5;
     } else {
         QString res = QString::number(source_port) + "->" + QString::number(destination_port);
@@ -225,7 +226,7 @@ QString MultiThread::arpPackageHandle(const uchar *packet_content){
 QString MultiThread::dnsPackageHandle(const uchar *packet_content){
     DNS_HEADER* dns;
     dns = (DNS_HEADER*)(packet_content + 14 + 20 + 8);  //8是UDP头部长度
-    ushort id;
+    ushort id = ntohs(dns->id);
     ushort type = dns->flag;
     QString info = "";
     if((type & 0xf800) == 0x0000){  //QR位
@@ -233,5 +234,75 @@ QString MultiThread::dnsPackageHandle(const uchar *packet_content){
     }else if ((type & 0xf800) == 0x8000) {
         info = "Standard query response";
     }
+    QString name = "";
+    char* domain = (char*)(packet_content + 14 + 20 + 8 + 12);  //数据部分
+    while(*domain != 0x00){  //0x00代表结尾
+        if(domain != nullptr && (*domain) <= 64){  //小于64则表示该部分长度
+            int length = *domain;
+            domain ++;
+            for (int k = 0; k < length; k++) {
+                name += (*domain);
+                domain ++;
+            }
+            name += ".";
+        } else {
+            break;
+        }
+    }
+    if(name != ""){
+        name = name.left(name.length() - 1);
+    }
+    return info + "0x" + QString::number(id, 16) + " " + name;
+}
 
+QString MultiThread::icmpPackageHandle(const uchar *packet_content){
+    ICMP_HEADER* icmp;
+    icmp = (ICMP_HEADER*)(packet_content + 14 + 20);  //封装在IP
+    uchar type = icmp->type;
+    uchar code = icmp->code;
+    QString res = "";
+    switch (type) {
+    case 0:{
+        if(code == 0){
+            res = "Echo response (ping command response)";
+        }
+        break;
+    }
+    case 3:{
+        if(code == 0){
+            res = "Network unreachable";
+        }
+        else if(code == 1){
+            res = "Host unreachable";
+        }
+        else if (code == 2) {
+            res = "Protocol unreachable";
+        }
+        else if(code == 3){
+            res = "Port unreachable";
+        }
+        else if(code == 4){
+            res = "Fragmentation is required, but DF is set";
+        }
+        else if (code == 5) {
+            res = "Source route selection failed";
+        }
+        else if (code == 6) {
+            res = "Unknown target network";
+        }
+        break ;
+    }
+    case 5:{
+        res = "Relocation";
+        break ;
+    }
+    case 8:{
+        if(code == 0){
+            res = "Echo request (ping command request)";
+        }
+        break ;
+    }
+    default: break;
+    }
+    return res;
 }
