@@ -204,6 +204,26 @@ void MainWindow::on_tableWidget_cellClicked(int row, int column)
         QString packageType = pData[selectRow].getPackageType();
         if(packageType == "ARP"){
             QString arpOpCode = pData[selectRow].getArpOperationCode();
+            QTreeWidgetItem*item2 = new QTreeWidgetItem(QStringList()<<"Address Resolution Protocol " + arpOpCode);
+            ui->treeWidget->addTopLevelItem(item2);
+            QString hardwareType = pData[selectRow].getArpHardwareType();
+            QString protocolType = pData[selectRow].getArpProtocolType();
+            QString hardwareSize = pData[selectRow].getArpHardwareLength();
+            QString protocolSize = pData[selectRow].getArpProtocolLength();
+            QString srcMacAddr = pData[selectRow].getArpSrcMacAddr();
+            QString desMacAddr = pData[selectRow].getArpDesMacAddr();
+            QString srcIpAddr = pData[selectRow].getArpSrcIpAddr();
+            QString desIpAddr = pData[selectRow].getArpDesIpAddr();
+
+            item2->addChild(new QTreeWidgetItem(QStringList()<<"Hardware type: " + hardwareType));
+            item2->addChild(new QTreeWidgetItem(QStringList()<<"Protocol type: " + protocolType));
+            item2->addChild(new QTreeWidgetItem(QStringList()<<"Hardware size: " + hardwareSize));
+            item2->addChild(new QTreeWidgetItem(QStringList()<<"Protocol size: " + protocolSize));
+            item2->addChild(new QTreeWidgetItem(QStringList()<<"Opcode: " + arpOpCode));
+            item2->addChild(new QTreeWidgetItem(QStringList()<<"Sender MAC address: " + srcMacAddr));
+            item2->addChild(new QTreeWidgetItem(QStringList()<<"Sender IP address: " + srcIpAddr));
+            item2->addChild(new QTreeWidgetItem(QStringList()<<"Target MAC address: " + desMacAddr));
+            item2->addChild(new QTreeWidgetItem(QStringList()<<"Target IP address: " + desIpAddr));
         }
     }
     

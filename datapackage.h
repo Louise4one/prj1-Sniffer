@@ -41,6 +41,14 @@ public:
     QString getIpVersion();
 
     QString getArpOperationCode();
+    QString getArpProtocolType();
+    QString getArpHardwareType();
+    QString getArpProtocolLength();
+    QString getArpHardwareLength();
+    QString getArpSrcMacAddr();
+    QString getArpDesMacAddr();
+    QString getArpSrcIpAddr();
+    QString getArpDesIpAddr();
 };
 
 #endif // DATAPACKAGE_H

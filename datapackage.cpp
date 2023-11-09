@@ -181,12 +181,104 @@ QString DataPackage::getIpVersion(){
 QString DataPackage::getArpOperationCode(){
     ARP_HEADER *arp;
     arp = (ARP_HEADER*)(packet_content + 14);
-    int code = ntohs(arp->op_code);
     QString res = "";
+    int code = ntohs(arp->op_code);
     if(code == 1){
-        res  = "request(1)";
+        res = "request(1)";
     } else if(code == 2) {
         res = "reply(2)";
     }
+    return res;
+}
+
+QString DataPackage::getArpProtocolType(){
+    ARP_HEADER *arp;
+    arp = (ARP_HEADER*)(packet_content + 14);
+    QString res = "";
+    int type = ntohs(arp->protocol_type);
+    if(type == 0x0800){
+        res = "IPv4(0x0800)";
+    }else {
+        res = QString::number(type);
+    }
+    return res;
+}
+
+QString DataPackage::getArpHardwareType(){
+    ARP_HEADER *arp;
+    arp = (ARP_HEADER*)(packet_content + 14);
+    QString res = "";
+    int type = ntohs(arp->hardware_type);
+    if(type == 1){
+        res = "Ethernet(1)";
+    }else {
+        res = QString::number(type);
+    }
+    return res;
+}
+
+QString DataPackage::getArpProtocolLength(){
+    ARP_HEADER *arp;
+    arp = (ARP_HEADER*)(packet_content + 14);
+    QString res = QString::number(arp->ip_length);
+    return res;
+}
+
+QString DataPackage::getArpHardwareLength(){
+    ARP_HEADER *arp;
+    arp = (ARP_HEADER*)(packet_content + 14);
+    QString res = QString::number(arp->mac_length);
+    return res;
+}
+
+QString DataPackage::getArpSrcIpAddr(){
+    ARP_HEADER *arp;
+    arp = (ARP_HEADER*)(packet_content + 14);
+    QString res = "";
+    uchar *addr = arp->source_ip_addr;
+    res += QString::number(*addr) + "."
+         + QString::number(*(addr+1)) + "."
+         + QString::number(*(addr+2)) + "."
+         + QString::number(*(addr+3));
+    return res;
+}
+
+QString DataPackage::getArpDesIpAddr(){
+    ARP_HEADER *arp;
+    arp = (ARP_HEADER*)(packet_content + 14);
+    QString res = "";
+    uchar *addr = arp->destination_ip_addr;
+    res += QString::number(*addr) + "."
+         + QString::number(*(addr+1)) + "."
+         + QString::number(*(addr+2)) + "."
+         + QString::number(*(addr+3));
+    return res;
+}
+
+QString DataPackage::getArpSrcMacAddr(){
+    ARP_HEADER *arp;
+    arp = (ARP_HEADER*)(packet_content + 14);
+    QString res = "";
+    uchar *addr = arp->source_mac_addr;
+    res += byteToString(addr,1) + ":"
+         + byteToString((addr+1),1) + ":"
+         + byteToString((addr+2),1) + ":"
+         + byteToString((addr+3),1) + ":"
+         + byteToString((addr+4),1) + ":"
+         + byteToString((addr+5),1);
+    return res;
+}
+
+QString DataPackage::getArpDesMacAddr(){
+    ARP_HEADER *arp;
+    arp = (ARP_HEADER*)(packet_content + 14);
+    QString res = "";
+    uchar *addr = arp->destination_mac_addr;
+    res += byteToString(addr,1) + ":"
+         + byteToString((addr+1),1) + ":"
+         + byteToString((addr+2),1) + ":"
+         + byteToString((addr+3),1) + ":"
+         + byteToString((addr+4),1) + ":"
+         + byteToString((addr+5),1);
     return res;
 }
