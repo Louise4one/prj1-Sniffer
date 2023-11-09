@@ -70,10 +70,6 @@ QString DataPackage::getPackageType(){
         return "UDP";
     case 5:
         return "DNS";
-    case 6:
-        return "TLS";
-    case 7:
-        return "SSL";
     default:
         return "";
     }
@@ -178,6 +174,105 @@ QString DataPackage::getIpVersion(){
     return QString::number(ip->version_and_head_length >> 4);
 }
 
+QString DataPackage::getIpHeadLength(){
+    IP_HEADER *ip;
+    ip = (IP_HEADER*)(packet_content + 14);
+    QString res = "";
+    int length = ip->version_and_head_length & 0x0F;
+    if(length == 5){
+        res = "20 bytes (5)";
+    }else{
+        res = QString::number(length * 5) + "bytes (" + QString::number(length) + ")";
+    }
+    return res;
+}
+
+QString DataPackage::getIpTos(){
+    IP_HEADER *ip;
+    ip = (IP_HEADER*)(packet_content + 14);
+    QString res = QString::number(ntohs(ip->TOS));
+    return res;
+}
+
+QString DataPackage::getIpTotalLength(){
+    IP_HEADER *ip;
+    ip = (IP_HEADER*)(packet_content + 14);
+    QString res = QString::number(ntohs(ip->total_length));
+    return res;
+}
+
+QString DataPackage::getIpIdentification(){
+    IP_HEADER *ip;
+    ip = (IP_HEADER*)(packet_content + 14);
+    QString res = QString::number(ntohs(ip->id), 16);
+    return res;
+}
+
+QString DataPackage::getIpFlag(){
+    IP_HEADER *ip;
+    ip = (IP_HEADER*)(packet_content + 14);
+    QString res = QString::number((ntohs(ip->flag_offset)& 0xe000) >> 8, 16);
+    return res;
+}
+
+QString DataPackage::getIpReservedBit(){
+    IP_HEADER*ip;
+    ip = (IP_HEADER*)(packet_content + 14);
+    int bit = (ntohs(ip->flag_offset) & 0x8000) >> 15;
+    QString res = QString::number(bit);
+    return res;
+}
+
+QString DataPackage::getIpDF(){
+    IP_HEADER*ip;
+    ip = (IP_HEADER*)(packet_content + 14);
+    QString res = QString::number((ntohs(ip->flag_offset) & 0x4000) >> 14);
+    return res;
+}
+
+QString DataPackage::getIpMF(){
+    IP_HEADER*ip;
+    ip = (IP_HEADER*)(packet_content + 14);
+    QString res = QString::number((ntohs(ip->flag_offset) & 0x2000) >> 13);
+    return res;
+}
+
+QString DataPackage::getIpFragmentOffset(){
+    IP_HEADER*ip;
+    ip = (IP_HEADER*)(packet_content + 14);
+    QString res = QString::number(ntohs(ip->flag_offset) & 0x1FFF);
+    return res;
+}
+
+QString DataPackage::getIpTTL(){
+    IP_HEADER*ip;
+    ip = (IP_HEADER*)(packet_content + 14);
+    QString res = QString::number(ip->ttl);
+    return res;
+}
+
+QString DataPackage::getIpProtocol(){
+    IP_HEADER*ip;
+    ip = (IP_HEADER*)(packet_content + 14);
+    int protocol = ip->protocol;
+    switch (protocol) {
+    case 1:
+        return "ICMP (1)";
+    case 6:
+        return "TCP (6)";
+    case 17:
+        return "UDP (17)";
+    default:
+        return "";
+    }
+}
+
+QString DataPackage::getIpCheckSum(){
+    IP_HEADER*ip;
+    ip = (IP_HEADER*)(packet_content + 14);
+    return QString::number(ntohs(ip->checksum),16);
+}
+
 QString DataPackage::getArpOperationCode(){
     ARP_HEADER *arp;
     arp = (ARP_HEADER*)(packet_content + 14);
@@ -280,5 +375,135 @@ QString DataPackage::getArpDesMacAddr(){
          + byteToString((addr+3),1) + ":"
          + byteToString((addr+4),1) + ":"
          + byteToString((addr+5),1);
+    return res;
+}
+
+QString DataPackage::getTcpSourcePort(){
+    TCP_HEADER *tcp;
+    tcp = (TCP_HEADER*)(packet_content + 14 + 20);
+    QString res = "";
+    int port = ntohs(tcp->source_port);
+    if(port == 443){
+        res = "https(443)";
+    }else{
+        res = QString::number(port);
+    }
+    return res;
+}
+
+QString DataPackage::getTcpDestinationPort(){
+    TCP_HEADER *tcp;
+    tcp = (TCP_HEADER*)(packet_content + 14 + 20);
+    QString res = "";
+    int port = ntohs(tcp->destination_port);
+    if(port == 443){
+        res = "https(443)";
+    }else{
+        res = QString::number(port);
+    }
+    return res;
+}
+
+QString DataPackage::getTcpSequence(){
+    TCP_HEADER *tcp;
+    tcp = (TCP_HEADER*)(packet_content + 14 + 20);
+    QString res = QString::number(ntohl(tcp->sequence_number));
+    return res;
+}
+
+QString DataPackage::getTcpAcknowledgment(){
+    TCP_HEADER *tcp;
+    tcp = (TCP_HEADER*)(packet_content + 14 + 20);
+    QString res = QString::number(ntohl(tcp->ack_number));
+    return res;
+}
+
+QString DataPackage::getTcpHeaderLength(){
+    TCP_HEADER *tcp;
+    tcp = (TCP_HEADER*)(packet_content + 14 + 20);
+    QString res = "";
+    int length = (tcp->header_length >> 4);
+    if(length == 5){
+        res = "20 bytes (5)";
+    }else{
+        res = QString::number(length*4) + " bytes (" + QString::number(length) + ")";
+    }
+    return res;
+}
+
+QString DataPackage::getTcpRawHeaderLength(){
+    TCP_HEADER *tcp;
+    tcp = (TCP_HEADER*)(packet_content + 14 + 20);
+    QString res = QString::number(tcp->header_length >> 4);
+    return res;
+}
+
+QString DataPackage::getTcpFlags(){
+    TCP_HEADER *tcp;
+    tcp = (TCP_HEADER*)(packet_content + 14 + 20);
+    QString res = QString::number(tcp->flags, 16);
+    return res;
+}
+
+QString DataPackage::getTcpPSH(){
+    TCP_HEADER *tcp;
+    tcp = (TCP_HEADER*)(packet_content + 14 + 20);
+    QString res = QString::number(((tcp->flags) & 0x08) >> 3);
+    return res;
+}
+
+QString DataPackage::getTcpACK(){
+    TCP_HEADER *tcp;
+    tcp = (TCP_HEADER*)(packet_content + 14 + 20);
+    QString res = QString::number(((tcp->flags) & 0x10) >> 4);
+    return res;
+}
+
+QString DataPackage::getTcpSYN(){
+    TCP_HEADER *tcp;
+    tcp = (TCP_HEADER*)(packet_content + 14 + 20);
+    QString res = QString::number(((tcp->flags) & 0x02) >> 1);
+    return res;
+}
+
+QString DataPackage::getTcpURG(){
+    TCP_HEADER *tcp;
+    tcp = (TCP_HEADER*)(packet_content + 14 + 20);
+    QString res = QString::number(((tcp->flags) & 0x20) >> 5);
+    return res;
+}
+
+QString DataPackage::getTcpFIN(){
+    TCP_HEADER *tcp;
+    tcp = (TCP_HEADER*)(packet_content + 14 + 20);
+    QString res = QString::number((tcp->flags) & 0x01);
+    return res;
+}
+
+QString DataPackage::getTcpRST(){
+    TCP_HEADER *tcp;
+    tcp = (TCP_HEADER*)(packet_content + 14 + 20);
+    QString res = QString::number(((tcp->flags) & 0x04) >> 2);
+    return res;
+}
+
+QString DataPackage::getTcpWindowSize(){
+    TCP_HEADER *tcp;
+    tcp = (TCP_HEADER*)(packet_content + 14 + 20);
+    QString res = QString::number(ntohs(tcp->window_size));
+    return res;
+}
+
+QString DataPackage::getTcpCheckSum(){
+    TCP_HEADER *tcp;
+    tcp = (TCP_HEADER*)(packet_content + 14 + 20);
+    QString res = QString::number(ntohs(tcp->checksum), 16);
+    return res;
+}
+
+QString DataPackage::getTcpUrgentPointer(){
+    TCP_HEADER *tcp;
+    tcp = (TCP_HEADER*)(packet_content + 14 + 20);
+    QString res = QString::number(ntohs(tcp->urgent));
     return res;
 }

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1117</width>
-    <height>642</height>
+    <width>1156</width>
+    <height>671</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,6 +51,27 @@
      <widget class="QWidget" name="widget_2" native="true">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
+        <widget class="QCheckBox" name="checkBox">
+         <property name="text">
+          <string>UDP</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox_2">
+         <property name="text">
+          <string>TCP</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox_3">
+         <property name="text">
+          <string>ICMP</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QSplitter" name="splitter">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -75,7 +96,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1117</width>
+     <width>1156</width>
      <height>26</height>
     </rect>
    </property>

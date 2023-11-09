@@ -39,6 +39,18 @@ public:
     QString getDesIpAddr();
     QString getSrcIpAddr();
     QString getIpVersion();
+    QString getIpHeadLength();
+    QString getIpTos();
+    QString getIpTotalLength();
+    QString getIpIdentification();
+    QString getIpFlag();
+    QString getIpReservedBit();
+    QString getIpDF();
+    QString getIpMF();
+    QString getIpFragmentOffset();
+    QString getIpTTL();
+    QString getIpProtocol();
+    QString getIpCheckSum();
 
     QString getArpOperationCode();
     QString getArpProtocolType();
@@ -49,6 +61,23 @@ public:
     QString getArpDesMacAddr();
     QString getArpSrcIpAddr();
     QString getArpDesIpAddr();
+
+    QString getTcpSourcePort();
+    QString getTcpDestinationPort();
+    QString getTcpSequence();
+    QString getTcpAcknowledgment();
+    QString getTcpHeaderLength();
+    QString getTcpRawHeaderLength();
+    QString getTcpFlags();
+    QString getTcpPSH();
+    QString getTcpACK();
+    QString getTcpSYN();
+    QString getTcpURG();
+    QString getTcpFIN();
+    QString getTcpRST();
+    QString getTcpWindowSize();
+    QString getTcpCheckSum();
+    QString getTcpUrgentPointer();
 };
 
 #endif // DATAPACKAGE_H

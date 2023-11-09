@@ -224,6 +224,160 @@ void MainWindow::on_tableWidget_cellClicked(int row, int column)
             item2->addChild(new QTreeWidgetItem(QStringList()<<"Sender IP address: " + srcIpAddr));
             item2->addChild(new QTreeWidgetItem(QStringList()<<"Target MAC address: " + desMacAddr));
             item2->addChild(new QTreeWidgetItem(QStringList()<<"Target IP address: " + desIpAddr));
+            return ;
+        }else {
+            QString srcIpAddr = pData[selectRow].getSrcIpAddr();
+            QString desIpAddr = pData[selectRow].getDesIpAddr();
+
+            QTreeWidgetItem*item3 = new QTreeWidgetItem(QStringList()<<"Internet Protocol Version 4, Src: " + srcIpAddr + ", Dst: " + desIpAddr);
+            ui->treeWidget->addTopLevelItem(item3);
+            QString version = pData[selectRow].getIpVersion();
+            QString headerLength = pData[selectRow].getIpHeadLength();
+            QString tos = pData[selectRow].getIpTos();
+            QString totalLength = pData[selectRow].getIpTotalLength();
+            QString id = "0x" + pData[selectRow].getIpIdentification();
+            QString flags = pData[selectRow].getIpFlag();
+            if(flags.size()<2){
+                flags = "0" + flags;
+            }
+            flags = "0x" + flags;
+            QString fragmentOffset = pData[selectRow].getIpFragmentOffset();
+            QString ttl = pData[selectRow].getIpTTL();
+            QString protocol = pData[selectRow].getIpProtocol();
+            QString checksum = "0x" + pData[selectRow].getIpCheckSum();
+            item3->addChild(new QTreeWidgetItem(QStringList()<<"0100 .... = Version: " + version));
+            item3->addChild(new QTreeWidgetItem(QStringList()<<".... 0101 = Header Length: " + headerLength));
+            item3->addChild(new QTreeWidgetItem(QStringList()<<"TOS: " + tos));
+            item3->addChild(new QTreeWidgetItem(QStringList()<<"Total Length: " + totalLength));
+            item3->addChild(new QTreeWidgetItem(QStringList()<<"Identification: " + id));
+
+            QString reservedBit = pData[selectRow].getIpReservedBit();
+            QString DF = pData[selectRow].getIpDF();
+            QString MF = pData[selectRow].getIpMF();
+            QString FLAG = ",";
+
+            if(reservedBit == "1"){
+                FLAG += "Reserved bit";
+            }
+            else if(DF == "1"){
+                FLAG += "Don't fragment";
+            }
+            else if(MF == "1"){
+                FLAG += "More fragment";
+            }
+            if(FLAG.size() == 1)
+                FLAG = "";
+            QTreeWidgetItem*bitTree = new QTreeWidgetItem(QStringList()<<"Flags: " + flags + FLAG);
+            item3->addChild(bitTree);
+            QString temp1 = "";
+            if(reservedBit == "1"){
+                temp1 = "Set";
+            }else {
+                temp1 = "Not set";
+            }
+            QString temp2 = "";
+            if(DF == "1"){
+                temp2 = "Set";
+            }else {
+                temp2 = "Not set";
+            }
+            QString temp3 = "";
+            if(MF == "1"){
+                temp3 = "Set";
+            }else {
+                temp3 = "Not set";
+            }
+            bitTree->addChild(new QTreeWidgetItem(QStringList()<<reservedBit + "... .... = Reserved bit: " + temp1));
+            bitTree->addChild(new QTreeWidgetItem(QStringList()<<"." + DF + ".. .... = Don't fragment: " + temp2));
+            bitTree->addChild(new QTreeWidgetItem(QStringList()<<".." + MF + ". .... = More fragment: " + temp3));
+            item3->addChild(new QTreeWidgetItem(QStringList()<<"Fragment Offset: " + fragmentOffset));
+            item3->addChild(new QTreeWidgetItem(QStringList()<<"Time to Live: " + ttl));
+            item3->addChild(new QTreeWidgetItem(QStringList()<<"Protocol: " + protocol));
+            item3->addChild(new QTreeWidgetItem(QStringList()<<"Header checksum: " + checksum));
+            item3->addChild(new QTreeWidgetItem(QStringList()<<"Source Address: " + srcIpAddr));
+            item3->addChild(new QTreeWidgetItem(QStringList()<<"Destination Address: " + desIpAddr));
+
+            int dataLength = totalLength.toUtf8().toInt() - 20;
+            if(packageType == "TCP"){
+                QString desPort = pData[selectRow].getTcpDestinationPort();
+                QString srcPort = pData[selectRow].getTcpSourcePort();
+                QString ack = pData[selectRow].getTcpAcknowledgment();
+                QString seq = pData[selectRow].getTcpSequence();
+                QString headerLength = pData[selectRow].getTcpHeaderLength();
+                int rawLength = pData[selectRow].getTcpRawHeaderLength().toUtf8().toInt();
+                dataLength -= (rawLength * 4);
+                QString flag = pData[selectRow].getTcpFlags();
+                flag = "0x00" + flag;
+                QTreeWidgetItem*item4 = new QTreeWidgetItem(QStringList()<<"Transmission Control Protocol, Src Port: " + srcPort + ", Dst Port: " + desPort + ",Seq: " + seq + ", Ack: " + ack + ", Len: " + QString::number(dataLength));
+                ui->treeWidget->addTopLevelItem(item4);
+                item4->addChild(new QTreeWidgetItem(QStringList()<<"Source Port: " + srcPort));
+                item4->addChild(new QTreeWidgetItem(QStringList()<<"Destination Port: " + desPort));
+                item4->addChild(new QTreeWidgetItem(QStringList()<<"Sequence Number (raw) : " + seq));
+                item4->addChild(new QTreeWidgetItem(QStringList()<<"Ackowledgment Number (raw) : " + ack));
+
+                QString sLength = QString::number(rawLength,2);
+                while(sLength.size()<4)
+                    sLength = "0" + sLength;
+                item4->addChild(new QTreeWidgetItem(QStringList()<<sLength + " .... = Head Length: " + headerLength));
+
+                QString PSH = pData[selectRow].getTcpPSH();
+                QString URG = pData[selectRow].getTcpURG();
+                QString ACK = pData[selectRow].getTcpACK();
+                QString RST = pData[selectRow].getTcpRST();
+                QString SYN = pData[selectRow].getTcpSYN();
+                QString FIN = pData[selectRow].getTcpFIN();
+                QString FLAG = "";
+
+                QString temp4, temp5, temp6, temp7, temp8, temp9 = "Not set";
+                if(PSH == "1"){
+                    FLAG += "PSH,";
+                    temp4 = "Set";
+                }
+                if(URG == "1"){
+                    FLAG += "UGR,";
+                    temp5 = "Set";
+                }
+                if(ACK == "1"){
+                    FLAG += "ACK,";
+                    temp6 = "Set";
+                }
+                if(RST == "1"){
+                    FLAG += "RST,";
+                    temp7 = "Set";
+                }
+                if(SYN == "1"){
+                    FLAG += "SYN,";
+                    temp8 = "Set";
+                }
+                if(FIN == "1"){
+                    FLAG += "FIN,";
+                    temp9 = "Set";
+                }
+                FLAG = FLAG.left(FLAG.length()-1);
+                if(SYN == "1"){
+                    item4->addChild(new QTreeWidgetItem(QStringList()<<"Sequence Number: 0 (relative sequence number)"));
+                    item4->addChild(new QTreeWidgetItem(QStringList()<<"Acknowledgment Number: 0 (relative ack number)"));
+                }
+                if(SYN == "1" && ACK == "1"){
+                    item4->addChild(new QTreeWidgetItem(QStringList()<<"Sequence Number: 0 (relative sequence number)"));
+                    item4->addChild(new QTreeWidgetItem(QStringList()<<"Acknowledgment Number: 1 (relative ack number)"));
+                }
+                QTreeWidgetItem*flagTree = new QTreeWidgetItem(QStringList()<<"Flags: " + flag + " (" + FLAG + ")");
+                item4->addChild(flagTree);
+                flagTree->addChild(new QTreeWidgetItem(QStringList()<<".... .." + URG + ". .... = Urgent(URG): " + temp5));
+                flagTree->addChild(new QTreeWidgetItem(QStringList()<<".... ..." + ACK + " .... = Acknowledgment(ACK): " + temp6));
+                flagTree->addChild(new QTreeWidgetItem(QStringList()<<".... .... " + PSH + "... = Push(PSH): " + temp4));
+                flagTree->addChild(new QTreeWidgetItem(QStringList()<<".... .... ." + RST + ".. = Reset(RST): " + temp7));
+                flagTree->addChild(new QTreeWidgetItem(QStringList()<<".... .... .." + SYN + ". = Syn(SYN): " + temp8));
+                flagTree->addChild(new QTreeWidgetItem(QStringList()<<".... .... ..." + FIN + " = Fin(FIN): " + temp9));
+
+                QString window = pData[selectRow].getTcpWindowSize();
+                QString checksum = "0x" + pData[selectRow].getTcpCheckSum();
+                QString urgent = pData[selectRow].getTcpUrgentPointer();
+                item4->addChild(new QTreeWidgetItem(QStringList()<<"window: " + window));
+                item4->addChild(new QTreeWidgetItem(QStringList()<<"checksum: " + checksum));
+                item4->addChild(new QTreeWidgetItem(QStringList()<<"Urgent Pointer: " + urgent));
+            }
         }
     }
     
