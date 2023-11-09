@@ -39,6 +39,8 @@ public:
     QString getDesIpAddr();
     QString getSrcIpAddr();
     QString getIpVersion();
+
+    QString getArpOperationCode();
 };
 
 #endif // DATAPACKAGE_H

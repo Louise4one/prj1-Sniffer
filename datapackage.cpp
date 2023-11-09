@@ -9,6 +9,7 @@ DataPackage::DataPackage()
     this->time_stamp = "";
     this->data_length = 0;
     this->package_type = 0;
+    this->packet_content = nullptr;
 }
 
 QString DataPackage::byteToString(uchar *str, int size){
@@ -79,7 +80,7 @@ QString DataPackage::getPackageType(){
 }
 
 QString DataPackage::getInfo(){
-    return this->time_stamp;
+    return info;
 }
 
 void DataPackage::setPackageType(int type){
@@ -175,4 +176,17 @@ QString DataPackage::getIpVersion(){
     IP_HEADER *ip;
     ip = (IP_HEADER*)(packet_content + 14);
     return QString::number(ip->version_and_head_length >> 4);
+}
+
+QString DataPackage::getArpOperationCode(){
+    ARP_HEADER *arp;
+    arp = (ARP_HEADER*)(packet_content + 14);
+    int code = ntohs(arp->op_code);
+    QString res = "";
+    if(code == 1){
+        res  = "request(1)";
+    } else if(code == 2) {
+        res = "reply(2)";
+    }
+    return res;
 }

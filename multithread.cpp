@@ -6,7 +6,10 @@
 
 MultiThread::MultiThread()
 {
-    this->isDone = true;
+    this->isDone = false;
+    this->pointer = nullptr;
+    this->header = nullptr;
+    this->pkt_data = nullptr;
 }
 
 QString MultiThread::byteToString(uchar *str, int size){
@@ -44,7 +47,7 @@ void MultiThread::setFlag(){
 }
 
 void MultiThread::resetFlag(){
-    this->isDone = true;
+    this->isDone = false;
 }
 
 void MultiThread::run(){//不停捕捉数据包
@@ -73,6 +76,8 @@ void MultiThread::run(){//不停捕捉数据包
                 data.setPackageType(type);
                 data.setPointer(pkt_data, len);
                 emit send(data);
+            }else {
+                continue ;
             }
         }
     }
@@ -83,6 +88,7 @@ int MultiThread::ethernetPackageHandle(const uchar *packet_content, QString &inf
     ushort content_type;
     ethernet = (ETHER_HEAD *)(packet_content);
     content_type = ntohs(ethernet->type);
+
     switch (content_type) {
     case 0x0800:{//IP
         int ipPackage = 0;
@@ -121,7 +127,7 @@ int MultiThread::ipPackageHandle(const uchar *packet_content, int &ipPackage){
     return protocol;
 }
 
-int MultiThread::tcpPackageHandle(const uchar *packet_content, QString &info, int &ipPackage){
+int MultiThread::tcpPackageHandle(const uchar *packet_content, QString &info, int ipPackage){
     TCP_HEADER *tcp;
     tcp = (TCP_HEADER*)(packet_content + 14 + 20);  //14byte是以太网头部，20byte是ip头部
     ushort source_port = ntohs(tcp->source_port);
@@ -143,32 +149,32 @@ int MultiThread::tcpPackageHandle(const uchar *packet_content, QString &info, in
 
     QString flag = "";
     if(tcp->flags & 0x08){
-        flag += "PSH";
+        flag += "PSH,";
     }
     if(tcp->flags & 0x10){
-        flag += "ACK";
+        flag += "ACK,";
     }
     if(tcp->flags & 0x02){
-        flag += "SYN";
+        flag += "SYN,";
     }
     if(tcp->flags & 0x20){
-        flag += "URG";
+        flag += "URG,";
     }
     if(tcp->flags & 0x01){
-        flag += "FIN";
+        flag += "FIN,";
     }
     if(tcp->flags & 0x04){
-        flag += "RST";
+        flag += "RST,";
     }
     if(flag != ""){
         flag = flag.left(flag.length() - 1);
-        info += "[" + flag + "]";
+        info += " [" + flag + "]";
     }
 
     uint sequence_number = ntohl(tcp->sequence_number);
     uint ack_number = ntohl(tcp->ack_number);
     ushort window_size = ntohs(tcp->window_size);
-    info += " Seq=" + QString::number(sequence_number) + "Ack=" + QString::number(ack_number) + "window=" + QString::number(window_size) + "len=" + QString::number(tcp_data_length);
+    info += " Seq=" + QString::number(sequence_number) + " Ack=" + QString::number(ack_number) + " window=" + QString::number(window_size) + " Len=" + QString::number(tcp_data_length);
     return type;
 }
 
@@ -183,7 +189,7 @@ int MultiThread::udpPackageHandle(const uchar *packet_content, QString &info){
     } else {
         QString res = QString::number(source_port) + "->" + QString::number(destination_port);
         ushort data_length = ntohs(udp->data_length);
-        res += "length = " + QString::number(data_length);
+        res += " length=" + QString::number(data_length);
         info = res;
         return 4;
     }
@@ -230,9 +236,9 @@ QString MultiThread::dnsPackageHandle(const uchar *packet_content){
     ushort type = dns->flag;
     QString info = "";
     if((type & 0xf800) == 0x0000){  //QR位
-        info = "Standard query";
+        info = "Standard query ";
     }else if ((type & 0xf800) == 0x8000) {
-        info = "Standard query response";
+        info = "Standard query response ";
     }
     QString name = "";
     char* domain = (char*)(packet_content + 14 + 20 + 8 + 12);  //数据部分
