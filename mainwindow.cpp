@@ -134,6 +134,8 @@ int MainWindow::capture(){
         device = nullptr;
         return -1;
     }else {//否则设备打开成功
+        pcap_compile(pointer, &filter, filter_app, 1, 0);
+        pcap_setfilter(pointer, &filter);
         if(pcap_datalink(pointer) != DLT_EN10MB){
             pcap_close(pointer);
             pcap_freealldevs(all_device);
@@ -381,4 +383,101 @@ void MainWindow::on_tableWidget_cellClicked(int row, int column)
         }
     }
     
+}
+
+void MainWindow::filterChange(bool *status){
+    if(status[0] && status[1] && status[2] && status[3] && status[4]){
+        filter_app = "";
+    }else if(!status[0] && status[1] && status[2] && status[3] && status[4]){
+        filter_app = "not arp";
+    }else if(!status[0] && !status[1] && status[2] && status[3] && status[4]){
+        filter_app = "not arp and not icmp";
+    }else if(!status[0] && !status[1] && !status[2] && status[3] && status[4]){
+        filter_app = "not arp and not icmp and not tcp";
+    }else if(!status[0] && !status[1] && status[2] && !status[3] && status[4]){
+        filter_app = "not arp and not icmp and not udp";
+    }else if(!status[0] && !status[1] && status[2] && status[3] && !status[4]){
+        filter_app = "arp and tcp and udp";
+    }else if(!status[0] && !status[1] && !status[2] && !status[3] && status[4]){
+        filter_app = "not arp and not icmp and not tcp and not udp";
+    }else if(!status[0] && status[1] && !status[2] && status[3] && status[4]){
+        filter_app = "not arp and not tcp";
+    }else if(!status[0] && status[1] && !status[2] && !status[3] && status[4]){
+        filter_app = "not arp and not icmp and not tcp and not udp";
+    }else if(!status[0] && status[1] && !status[2] && status[3] && !status[4]){
+        filter_app = "icmp and udp";
+    }else if(!status[0] && status[1] && !status[2] && !status[3] && !status[4]){
+        filter_app = "icmp";
+    }else if(!status[0] && status[1] && status[2] && !status[3] && status[4]){
+        filter_app = "not arp and not udp";
+    }else if(!status[0] && status[1] && status[2] && !status[3] && !status[4]){
+        filter_app = "icmp and tcp";
+    }else if(!status[0] && status[1] && status[2] && status[3] && !status[4]){
+        filter_app = "icmp and tcp and udp";
+    }else if(status[0] && !status[1] && !status[2] && status[3] && status[4]){
+        filter_app = "not icmp and not tcp";
+    }else if(status[0] && !status[1] && !status[2] && !status[3] && status[4]){
+        filter_app = "not icmp and not tcp and not udp";
+    }else if(status[0] && !status[1] && !status[2] && status[3] && !status[4]){
+        filter_app = "arp and udp";
+    }else if(status[0] && !status[1] && !status[2] && !status[3] && !status[4]){
+        filter_app = "arp";
+    }else if(status[0] && !status[1] && status[2] && !status[3] && status[4]){
+        filter_app = "not icmp and not udp";
+    }else if(status[0] && !status[1] && status[2] && !status[3] && !status[4]){
+        filter_app = "arp and tcp";
+    }else if(status[0] && !status[1] && status[2] && status[3] && status[4]){
+        filter_app = "not icmp";
+    }else if(status[0] && status[1] && !status[2] && !status[3] && status[4]) {
+        filter_app = "not tcp and not udp";
+    }else if(status[0] && status[1] && !status[2] && status[3] && !status[4]) {
+        filter_app = "arp and icmp and udp";
+    }else if(status[0] && status[1] && !status[2] && !status[3] && !status[4]) {
+        filter_app = "arp and icmp";
+    }else if(status[0] && status[1] && status[2] && !status[3] && !status[4]) {
+        filter_app = "arp and icmp and tcp";
+    }else if(status[0] && status[1] && !status[2] && status[3] && status[4]){
+        filter_app = "not tcp";
+    }else if(status[0] && status[1] && status[2] && !status[3] && status[4]){
+        filter_app = "not udp";
+    }else if(status[0] && status[1] && status[2] && status[3] && !status[4]){
+        filter_app = "arp and icmp and tcp and udp";
+    }else if(!status[0] && !status[1] && status[2] && !status[3] && !status[4]){
+        filter_app = "tcp";
+    }else if(!status[0] && !status[1] && !status[2] && status[3] && !status[4]){
+        filter_app = "udp";
+    }
+    else {
+        filter_app = "";
+    }
+}
+
+void MainWindow::on_checkBox_stateChanged(int arg1)
+{
+    status[0] = ui->checkBox->isChecked();
+    filterChange(status);
+}
+
+void MainWindow::on_checkBox_2_stateChanged(int arg1)
+{
+    status[1] = ui->checkBox_2->isChecked();
+    filterChange(status);
+}
+
+void MainWindow::on_checkBox_3_stateChanged(int arg1)
+{
+    status[2] = ui->checkBox_3->isChecked();
+    filterChange(status);
+}
+
+void MainWindow::on_checkBox_4_stateChanged(int arg1)
+{
+    status[3] = ui->checkBox_4->isChecked();
+    filterChange(status);
+}
+
+void MainWindow::on_checkBox_5_stateChanged(int arg1)
+{
+    status[4] = ui->checkBox_5->isChecked();
+    filterChange(status);
 }

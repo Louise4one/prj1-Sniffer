@@ -27,6 +27,16 @@ private slots:
 
     void on_tableWidget_cellClicked(int row, int column);
     
+    void on_checkBox_stateChanged(int arg1);
+
+    void on_checkBox_2_stateChanged(int arg1);
+
+    void on_checkBox_3_stateChanged(int arg1);
+
+    void on_checkBox_4_stateChanged(int arg1);
+
+    void on_checkBox_5_stateChanged(int arg1);
+
 public slots:
     void HandleMessage(DataPackage data);
 
@@ -39,6 +49,11 @@ private:
     int countNumber; //数据包个数
     char errbuf[PCAP_ERRBUF_SIZE];
     int selectRow;  //选中的那一行
+    //过滤
+    struct bpf_program filter;
+    char *filter_app = "";
+    bool status[5];
+    void filterChange(bool status[5]);
 };
 
 #endif // MAINWINDOW_H

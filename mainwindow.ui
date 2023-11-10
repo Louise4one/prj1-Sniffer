@@ -53,21 +53,35 @@
        <item>
         <widget class="QCheckBox" name="checkBox">
          <property name="text">
-          <string>UDP</string>
+          <string>ARP</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QCheckBox" name="checkBox_2">
          <property name="text">
-          <string>TCP</string>
+          <string>ICMP</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QCheckBox" name="checkBox_3">
          <property name="text">
-          <string>ICMP</string>
+          <string>TCP</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox_4">
+         <property name="text">
+          <string>UDP</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox_5">
+         <property name="text">
+          <string>Others</string>
          </property>
         </widget>
        </item>
